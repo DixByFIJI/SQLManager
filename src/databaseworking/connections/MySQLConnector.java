@@ -12,6 +12,11 @@ import java.sql.SQLException;
 import databaseworking.requests.Executable;
 import java.sql.ResultSet;
 import java.sql.SQLSyntaxErrorException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -38,28 +43,38 @@ public class MySQLConnector {
 	}
 
 	public boolean connect() {
-		MysqlDataSource mysqlDataSource = new MysqlDataSource();
+		boolean isConncted = true;
+		FutureTask<Boolean> task = new FutureTask<>(new Callable<Boolean>(){
+			@Override
+			public Boolean call() throws Exception {
+				MysqlDataSource mysqlDataSource = new MysqlDataSource();
 		
-		mysqlDataSource.setUser(user);
-		mysqlDataSource.setPassword(pass);
-		mysqlDataSource.setDatabaseName(databaseName);
-		mysqlDataSource.setPort(port);
-		try {
-			mysqlDataSource.setServerTimezone(timeZone);
-			mysqlDataSource.setCharacterEncoding(charset);
-			
-			connection = mysqlDataSource.getConnection();
-			if(Executable.execute("SELECT * FROM " + getTableName()) == null){
-				return false;
+				mysqlDataSource.setUser(user);
+				mysqlDataSource.setPassword(pass);
+				mysqlDataSource.setDatabaseName(databaseName);
+				mysqlDataSource.setPort(port);
+				try {
+					mysqlDataSource.setServerTimezone(timeZone);
+					mysqlDataSource.setCharacterEncoding(charset);
+
+					connection = mysqlDataSource.getConnection();
+				} catch (SQLSyntaxErrorException ex){
+					return false;
+				} catch (SQLException sqlEx) {
+					return false;
+				}
+				return true;
 			}
-		} catch (SQLSyntaxErrorException ex){
-			
-			return false;
-		} catch (SQLException sqlEx) {
-			
-			return false;
-		}
-		return true;
+		});
+		
+		Thread connectThread = new Thread(task);
+			connectThread.start();
+			try {
+				isConncted = task.get();
+			} catch (InterruptedException | ExecutionException ex) {
+				ex.printStackTrace();
+			}
+		return isConncted;
 	}
 	
 	public MySQLConnector setUser(String user) {

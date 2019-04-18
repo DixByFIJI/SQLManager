@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" fx:id="paneRoot" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="databaseworking.MainController">
+    <children>
+      <VBox fx:id="vboxTableConfiguration" alignment="CENTER" layoutX="264.0" layoutY="112.0" prefHeight="468.0" prefWidth="616.0" visible="false">
+         <children>
+            <ScrollPane fx:id="scrlContainer" prefHeight="403.0" prefWidth="616.0">
+               <content>
+                  <VBox fx:id="vboxTable" alignment="TOP_CENTER" prefHeight="403.0" prefWidth="600.0" spacing="5.0" />
+               </content>
+            </ScrollPane>
+            <HBox fx:id="hboxTableConfigurationActions" alignment="CENTER" prefHeight="71.0" prefWidth="528.0" spacing="20.0">
+               <children>
+                  <ImageView fx:id="imgAddRow" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/plus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgRemoveRow" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/minus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgConfirm" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/save.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgRefresh" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/refresh.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <HBox fx:id="hboxToolBar" alignment="CENTER_LEFT" layoutX="19.0" layoutY="27.0" prefHeight="64.0" prefWidth="861.0">
+         <children>
+            <ImageView fx:id="imgConnection" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/connect.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imgSQLConfiguration" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/sql.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imgAddDatabase" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/database.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <TreeView fx:id="treeDatabases" layoutX="20.0" layoutY="112.0" prefHeight="468.0" prefWidth="227.0" />
+      <Pane fx:id="paneDatabaseCreating" layoutX="264.0" layoutY="112.0" prefHeight="468.0" prefWidth="616.0" visible="false">
+         <children>
+            <Pane fx:id="paneDatabaseConfig" layoutX="53.0" layoutY="161.0" prefHeight="146.0" prefWidth="510.0">
+               <children>
+                  <HBox alignment="CENTER_RIGHT" layoutX="14.0" layoutY="25.0" prefHeight="50.0" prefWidth="403.0" spacing="5.0">
+                     <children>
+                        <Label text="Name:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtDatabaseName" prefHeight="30.0" prefWidth="336.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_RIGHT" layoutX="23.0" layoutY="75.0" prefHeight="50.0" prefWidth="393.0" spacing="5.0">
+                     <children>
+                        <Label text="Charset:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="cmbDatabaseCharset" prefHeight="31.0" prefWidth="178.0" />
+                        <TextField fx:id="txtDatabaseManualCharset" prefHeight="30.0" prefWidth="153.0" promptText="Manual">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxDatabaseActions" alignment="CENTER" layoutX="537.0" layoutY="156.0" prefHeight="71.0" prefWidth="50.0" spacing="20.0" />
+                  <ImageView fx:id="imgCreateDatabase" fitHeight="50.0" fitWidth="50.0" layoutX="435.0" layoutY="48.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/check.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <VBox fx:id="vboxTableCreating" alignment="CENTER" layoutX="264.0" layoutY="112.0" prefHeight="468.0" prefWidth="616.0" visible="false">
+         <children>
+            <Pane fx:id="paneTableFieldsHeader" prefHeight="27.0" prefWidth="600.0">
+               <children>
+                  <Label layoutX="70.0" layoutY="4.0" text="Name">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="250.0" layoutY="4.0" text="Type">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="372.0" layoutY="4.0" text="Length">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="442.0" layoutY="4.0" text="Null">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="485.0" layoutY="4.0" text="Primary Key">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="572.0" layoutY="4.0" text="A_I">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <ScrollPane fx:id="scrlCreatingTable" prefHeight="277.0" prefWidth="616.0">
+               <content>
+                  <VBox fx:id="vboxTableFields" alignment="TOP_CENTER" prefHeight="276.0" prefWidth="600.0" spacing="5.0" />
+               </content>
+            </ScrollPane>
+            <HBox fx:id="hboxCreatingTableMetaNameComment" alignment="CENTER" prefHeight="47.0" prefWidth="616.0" spacing="5.0">
+               <children>
+                  <Label text="Name:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txtTableName" prefHeight="25.0" prefWidth="140.0" />
+                  <Label text="Comment:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txtTableComment" prefHeight="25.0" prefWidth="331.0" />
+               </children>
+            </HBox>
+            <HBox fx:id="hboxCreatingTableMetaCharsetType" alignment="CENTER" prefHeight="47.0" prefWidth="616.0" spacing="5.0">
+               <children>
+                  <Label text="Charset: ">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="cmbTableCharset" prefHeight="25.0" prefWidth="140.0" />
+                  <TextField fx:id="txtTableManualCharset" prefHeight="25.0" prefWidth="140.0" promptText="Manual" />
+                  <Label text="Type:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="cmbTableType" prefHeight="25.0" prefWidth="104.0" />
+                  <TextField fx:id="txtTableManualType" prefHeight="25.0" prefWidth="96.0" promptText="Manual" />
+               </children>
+            </HBox>
+            <HBox fx:id="hboxTableCreatingActions" alignment="CENTER" prefHeight="71.0" prefWidth="616.0" spacing="20.0">
+               <children>
+                  <ImageView fx:id="imgAddField" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/plus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgRemoveField" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/minus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgCreateTable" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/check.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <Pane fx:id="paneSQLConfiguration" layoutX="264.0" layoutY="112.0" prefHeight="468.0" prefWidth="616.0">
+         <children>
+            <Pane fx:id="paneSQLInput" layoutX="13.0" layoutY="14.0" prefHeight="196.0" prefWidth="590.0">
+               <children>
+                  <ImageView fx:id="imgExecuteQuery" fitHeight="50.0" fitWidth="50.0" layoutX="526.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@sources/check.png" />
+                     </image>
+                  </ImageView>
+                  <TextArea fx:id="txaSQLQuery" layoutX="14.0" layoutY="37.0" prefHeight="142.0" prefWidth="495.0" promptText="#SQL..." />
+                  <Label fx:id="lblSQLStatus" alignment="CENTER" layoutX="14.0" layoutY="8.0" prefHeight="20.0" prefWidth="561.0" text="SQL query (s) on server &quot;MySQL&quot;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <ScrollPane fx:id="scrlSQLResults" layoutX="13.0" layoutY="223.0" prefHeight="231.0" prefWidth="590.0">
+               <content>
+                  <VBox fx:id="vboxSQLResults" alignment="TOP_CENTER" prefHeight="230.0" prefWidth="574.0" spacing="5.0" />
+               </content>
+            </ScrollPane>
+         </children>
+      </Pane>
+    </children>
+</AnchorPane>
