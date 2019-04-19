@@ -31,6 +31,11 @@ public class HostConnector {
 
 	private Connection connection;
 	
+	/**
+	 * Creates a connection to remote server by specified parameters
+	 * @return {@code true} if connection was established
+	 */
+	
 	public boolean connect() {
 		boolean isConncted = false;
 		FutureTask<Boolean> task = new FutureTask<>(new Callable<Boolean>(){

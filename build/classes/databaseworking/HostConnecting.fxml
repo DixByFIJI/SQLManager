@@ -22,7 +22,7 @@
                         <Image url="@sources/host.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="txtHost" promptText="txtHost" text="127.0.0.1">
+                  <TextField fx:id="txtHost" promptText="Host" text="127.0.0.1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
                         <Image url="@sources/user.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="txtLogin" promptText="txtLogin" text="root">
+                  <TextField fx:id="txtLogin" promptText="User">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -64,7 +64,7 @@
                         <Image url="@sources/key.png" />
                      </image>
                   </ImageView>
-                  <PasswordField fx:id="txtPassword" prefHeight="30.0" prefWidth="170.0" promptText="txtPass" text="qwe123">
+                  <PasswordField fx:id="txtPassword" prefHeight="30.0" prefWidth="170.0" promptText="Password">
                      <font>
                         <Font size="14.0" />
                      </font>

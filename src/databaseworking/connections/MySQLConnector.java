@@ -23,25 +23,22 @@ import java.util.logging.Logger;
  * @author Username
  */
 public class MySQLConnector {
-	private String user = "root";	
-	private String pass = "qwe123";	
-	private String host = "127.0.0.1";	
-	private int port = 3306;	
-	private String databaseName = "db_working";
-	private String tableName = "readers";
+	private String user;	
+	private String pass;	
+	private String host;	
+	private int port;	
+	private String databaseName;
+	private String tableName;
 	private String charset = "cp1251";
 	private String timeZone = "UTC";
 	
 	private Connection connection;
 
 	/**
-	 * Make connection to remote MySQL database
-	 * @return @code true if connection is successful;
+	 * Creates connection to remote MySQL database by specified parameters
+	 * @return {@code true} if connection was established
 	 */
-	public void setTimeZone(String timeZone) {
-		this.timeZone = timeZone;
-	}
-
+	
 	public boolean connect() {
 		boolean isConncted = true;
 		FutureTask<Boolean> task = new FutureTask<>(new Callable<Boolean>(){
@@ -105,6 +102,10 @@ public class MySQLConnector {
 	public MySQLConnector setTableName(String tableName) {
 		this.tableName = tableName;
 		return this;
+	}
+	
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
 	}
 
 	public MySQLConnector setCharset(String charset) {

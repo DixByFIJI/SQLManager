@@ -69,6 +69,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.effect.BoxBlur;
@@ -260,17 +261,36 @@ public class MainController {
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	void initialize() {
 		
+		Tooltip.install(imgConnection, new Tooltip("Connection settings"));
+		Tooltip.install(imgAddDatabase, new Tooltip("Add database"));
+		Tooltip.install(imgSQLConfiguration, new Tooltip("SQL"));
+		
+		Tooltip.install(imgAddRow, new Tooltip("Add row"));
+		Tooltip.install(imgRemoveRow, new Tooltip("Remove selected row"));
+		Tooltip.install(imgConfirm, new Tooltip("Save changes"));
+		Tooltip.install(imgRefresh, new Tooltip("Refresh table"));
+		
+		Tooltip.install(imgAddField, new Tooltip("Add field"));
+		Tooltip.install(imgRemoveField, new Tooltip("Remove field"));
+		Tooltip.install(imgCreateTable, new Tooltip("Create table"));
+		
+		Tooltip.install(imgExecuteQuery, new Tooltip("Execute query"));
+		Tooltip.install(imgCreateDatabase, new Tooltip("Create database"));
+		
 		ImageView imgRemoveDatabase = new ImageView("databaseworking/sources/database_remove.png");
 		imgRemoveDatabase.setFitHeight(50);
 		imgRemoveDatabase.setFitWidth(50);
+		Tooltip.install(imgRemoveDatabase, new Tooltip("Remove database"));
 
 		ImageView imgRemoveTable = new ImageView("databaseworking/sources/table_remove.png");
 		imgRemoveTable.setFitHeight(50);
 		imgRemoveTable.setFitWidth(50);
+		Tooltip.install(imgRemoveTable, new Tooltip("Remove table"));
 		
 		ImageView imgAddTable = new ImageView("databaseworking/sources/table.png");
 		imgAddTable.setFitHeight(50);
 		imgAddTable.setFitWidth(50);
+		Tooltip.install(imgAddTable, new Tooltip("Add table"));
 		
 		Platform.runLater(new Runnable() {
 			@Override
@@ -317,22 +337,6 @@ public class MainController {
 			openSettingsWindow();
 		});
 		
-		treeDatabases.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-			@Override
-			public void handle(ContextMenuEvent event) {
-//				Object selectedItem = treeDatabases.getSelectionModel().getSelectedItem();
-//				if(selectedItem.getClass() == TreeDatabaseItem.class){
-//					System.out.println("database");
-//				} else if(selectedItem.getClass() == TreeTableItem.class){
-//					selectedTable = ((TreeTableItem)selectedItem);
-//					loadData(selectedTable.getName());
-//					System.out.println("table");
-//				} else {
-//					System.out.println("other");
-//				}
-			}
-		});
-		
 		treeDatabases.setOnMouseClicked((event) -> {
 			Object selectedItem = treeDatabases.getSelectionModel().getSelectedItem();
 			
@@ -347,7 +351,10 @@ public class MainController {
 					if(!hboxToolBar.getChildren().contains(imgAddTable)) {
 						hboxToolBar.getChildren().add(4, imgAddTable);
 					}
-					hboxToolBar.getChildren().remove(imgRemoveTable);
+					
+					if(hboxToolBar.getChildren().contains(imgRemoveTable)){
+						hboxToolBar.getChildren().remove(imgRemoveTable);
+					}
 				} else if(selectedItem.getClass() == TreeTableItem.class){
 					hideAllPanes();
 					vboxTableConfiguration.setVisible(true);
@@ -360,13 +367,26 @@ public class MainController {
 						if(!hboxToolBar.getChildren().contains(imgRemoveTable)){
 							hboxToolBar.getChildren().add(5, imgRemoveTable);
 						}
-						hboxToolBar.getChildren().remove(imgRemoveDatabase);
+						
+						if(hboxToolBar.getChildren().contains(imgRemoveDatabase)){
+							hboxToolBar.getChildren().remove(imgRemoveDatabase);
+						}
 					} else {
-						System.out.println("WRONG DATABASE...");
+						Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+						errorAlert.setTitle("Error");
+						errorAlert.setHeaderText(null);
+						errorAlert.setContentText("Database connection error");
+						errorAlert.showAndWait();
 					}
-					System.out.println("table");
 				} else {
-					hboxToolBar.getChildren().removeAll(imgAddTable, imgRemoveTable, imgRemoveDatabase);
+					List<ImageView> imgList = new LinkedList<ImageView>(){{
+						add(imgAddTable);
+						add(imgRemoveTable);
+						add(imgRemoveDatabase);
+					}};
+					if(hboxToolBar.getChildren().containsAll(imgList)){
+						hboxToolBar.getChildren().removeAll(imgList);
+					}
 					lblSQLStatus.setText("SQL query (s) on server \"MySQL\"");
 				}
 			}
@@ -384,7 +404,6 @@ public class MainController {
 		});
 		
 		imgCreateDatabase.setOnMouseClicked((event) -> {
-			txtDatabaseName.clear();
 			
 			if(!txtDatabaseName.getText().isEmpty()){
 				Operator.createDatabase(
@@ -394,6 +413,7 @@ public class MainController {
 						txtDatabaseManualCharset.getText()
 				);
 				loadDatabasesTables();
+				txtDatabaseName.clear();
 			}
 		});
 		
@@ -426,6 +446,7 @@ public class MainController {
 		imgRemoveTable.setOnMouseClicked((event) -> {
 			Operator.removeTable(selectedTable.getName());
 			loadDatabasesTables();
+			hideAllPanes();
 		});
 		
 		imgAddField.setOnMouseClicked((event) -> {
@@ -433,10 +454,6 @@ public class MainController {
 		});
 		
 		imgCreateTable.setOnMouseClicked((event) -> {
-			txtTableName.clear();
-			txtTableManualCharset.clear();
-			txtTableManualType.clear();
-			
 			String name = txtTableName.getText();
 			String comment = txtTableComment.getText();
 			final String collate =  
@@ -448,57 +465,69 @@ public class MainController {
 				cmbTableType.getValue() :
 				txtTableManualType.getText();
 			
-			ObservableList<Node> rows = vboxTableFields.getChildren();
-			List<ArrayList<String>> list = new ArrayList<ArrayList<String>>(){{
-				for (Node row : rows) {
-					add(new ArrayList<String>(){{
-						String type = null;
-						for (Node cell : ((Pane)row).getChildren()) {
-							if(cell.getClass() == ComboBox.class) {
-								type = ((ComboBox<String>)cell).getValue();
-							} else if(cell.getClass() == TextField.class){
-								TextField field = ((TextField)cell);
-								if(field.getId().equals("length")) {
-									add(field.getText().isEmpty() ? type : type + "(" + field.getText() + ")");
-								} else {
-									add(field.getText());
-								}
-							}	else if(cell.getClass() == CheckBox.class) {
-								CheckBox item = ((CheckBox)cell);
-								switch(cell.getId()) {
-									case "null": {
-										if(!item.isSelected()) {
-											add("NOT NULL");
-										}
-										break;
+			if(!name.isEmpty()) {
+				ObservableList<Node> rows = vboxTableFields.getChildren();
+				List<ArrayList<String>> list = new ArrayList<ArrayList<String>>(){{
+					for (Node row : rows) {
+						add(new ArrayList<String>(){{
+							String type = null;
+							for (Node cell : ((Pane)row).getChildren()) {
+								if(cell.getClass() == ComboBox.class) {
+									type = ((ComboBox<String>)cell).getValue();
+								} else if(cell.getClass() == TextField.class){
+									TextField field = ((TextField)cell);
+									if(field.getId().equals("length")) {
+										add(field.getText().isEmpty() ? type : type + "(" + field.getText() + ")");
+									} else {
+										add(field.getText());
 									}
-									
-									case "primary": {
-										if(item.isSelected()) {
-											add("PRIMARY KEY");
+								}	else if(cell.getClass() == CheckBox.class) {
+									CheckBox item = ((CheckBox)cell);
+									switch(cell.getId()) {
+										case "null": {
+											if(!item.isSelected()) {
+												add("NOT NULL");
+											}
+											break;
 										}
-										break;
-									}
-									
-									case "auto_inc": {
-										if(item.isSelected()) {
-											add("AUTO_INCREMENT");
+
+										case "primary": {
+											if(item.isSelected()) {
+												add("PRIMARY KEY");
+											}
+											break;
 										}
-										break;
+
+										case "auto_inc": {
+											if(item.isSelected()) {
+												add("AUTO_INCREMENT");
+											}
+											break;
+										}
 									}
 								}
 							}
-						}
-					}});
-				}
-			}};
-			
-			Operator.createTalbe(name, collate, type, comment, list);
-			
-			loadDatabasesTables();
-			hideAllPanes();
-			loadDataToTable(name);
-			vboxTableConfiguration.setVisible(true);
+						}});
+					}
+				}};
+
+				Operator.createTalbe(name, collate, type, comment, list);
+
+				txtTableName.clear();
+				txtTableManualCharset.clear();
+				txtTableManualType.clear();
+
+				loadDatabasesTables();
+				hideAllPanes();
+				loadDataToTable(name);
+				vboxTableConfiguration.setVisible(true);
+			} else {
+				Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+				errorAlert.setTitle("Error");
+				errorAlert.setHeaderText(null);
+				errorAlert.setContentText("The table must have a name...");
+				errorAlert.showAndWait();
+			}
 		});
 		
 		imgRemoveField.setOnMouseClicked((event) -> {
@@ -643,8 +672,8 @@ public class MainController {
 	}
 	
 	/**
-	 * Loads data from specified table to work-space table
-	 * @param table the name of the table from which data is loading
+	 * Loads data from specified remote table to work-space table
+	 * @param table the name of remote table from which data is loading
 	 */
 	
 	public void loadDataToTable(String table){
@@ -699,10 +728,11 @@ public class MainController {
 			(scrlContainer.getPrefWidth() - 16 - 10 - ((columnCount - 1) * 5)) / 4;
 		for (int i = 0; i < columnCount; i++) {
 			TextField cell = new TextField();
+			cell.prefWidthProperty().bind(vboxTable.widthProperty());
 			cell.setMinWidth(cellWidth);
 			cell.setOnMouseClicked(rowSelecting);
 			cell.getStyleClass().add("tableCell");
-			row.getChildren().add(cell);
+			row.getChildren().addAll(cell);
 		}
 		row.setAlignment(Pos.TOP_LEFT);
 		row.setOnMouseClicked(rowSelecting);
@@ -792,7 +822,6 @@ public class MainController {
 			settingsStage.initModality(Modality.WINDOW_MODAL);
 			settingsStage.initOwner(paneRoot.getScene().getWindow());
 			settingsStage.setResizable(false);
-			//settingsStage.initStyle(StageStyle.UNDECORATED);
 			settingsStage.setTitle("Connection");
 			settingsStage.getIcons().add(new Image("databaseworking/sources/connectionIcon.png"));
 			paneRoot.setEffect(new BoxBlur(7, 7, 7));
@@ -801,7 +830,7 @@ public class MainController {
 			paneRoot.setEffect(null);
 			hideAllPanes();
 			loadDatabasesTables();
-			paneDatabaseCreating.setVisible(true);
+			paneSQLConfiguration.setVisible(true);
 		} catch (IOException ex) {
 			Logger.getLogger(HostConnectingController.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -827,18 +856,16 @@ public class MainController {
 	public boolean setTablesConnection(String database){
 		boolean isConnected = false;
 		mysqlconnector = new MySQLConnector()
-				.setHost(HostConnectingController.hostConnector.getHost())
-				.setPort(HostConnectingController.hostConnector.getPort())
-				.setUser(HostConnectingController.hostConnector.getUser())
-				.setPass(HostConnectingController.hostConnector.getPass())
-				.setDatabaseName(database);
+			.setHost(HostConnectingController.hostConnector.getHost())
+			.setPort(HostConnectingController.hostConnector.getPort())
+			.setUser(HostConnectingController.hostConnector.getUser())
+			.setPass(HostConnectingController.hostConnector.getPass())
+			.setDatabaseName(database);
 		
-			if(mysqlconnector.connect()){
-				connection = mysqlconnector.getConnection();
-				isConnected = true;
-			} else {
-				//...
-			}
+		if(mysqlconnector.connect()){
+			connection = mysqlconnector.getConnection();
+			isConnected = true;
+		}
 		return isConnected;
 	}
 	
@@ -855,7 +882,6 @@ public class MainController {
 				selectedRow = (HBox)event.getSource();
 			}
 			selectedRow.getStyleClass().add("selectedRow");
-			System.out.println("row is selected");
 		}
 	};
 	
@@ -863,7 +889,6 @@ public class MainController {
 		@Override
 		public void handle(MouseEvent event) {
 			Object source = event.getSource();
-			System.out.println(source.getClass().getName());
 			Node pointer = null;
 			if(selectedField != null){
 				pointer = selectedField.getChildren().stream()
@@ -875,10 +900,8 @@ public class MainController {
 
 			if(source.getClass() != Pane.class){
 				selectedField = ((Pane)(((Node)source).getParent()));
-				System.out.println("not pane");
 			} else {
 				selectedField = ((Pane)source);
-				System.out.println("pane");
 			}
 			
 			pointer = selectedField.getChildren().stream()
@@ -886,7 +909,6 @@ public class MainController {
 					.findFirst()
 					.get();
 			pointer.getStyleClass().add("tableFieldPointer");
-			System.out.println("field is selected");
 		}
 	};
 }

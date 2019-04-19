@@ -31,11 +31,10 @@ public class Executable {
 	 * Executes the specified query on the established connection
 	 * @param query value which will be executed
 	 * @return ResultSet reference that is result of the query executing
+	 * @throws java.sql.SQLException
 	 */
 	
 	public ResultSet execute(String query) throws SQLException{
-//		ResultSet resultSet = null;
-//		PreparedStatement preparedStatement;
 		PreparedStatement preparedStatement = connection.prepareStatement(query);
 		preparedStatement.execute();
 		ResultSet resultSet = preparedStatement.getResultSet();
@@ -47,25 +46,16 @@ public class Executable {
 	 * @param query value which will be executed
 	 * @param values prepared parameters for executing
 	 * @return ResultSet reference that is result of the query executing
+	 * @throws java.sql.SQLException
 	 */
 	
-	public ResultSet execute(String query, String ... values){
-		ResultSet resultSet = null;
-
-		
-		PreparedStatement preparedStatement;
-		try {
-			preparedStatement = connection.prepareStatement(query);
-			for (int i = 0; i < values.length; i++) {
-				preparedStatement.setString(i + 1, values[i]);
-			}
-			
-			preparedStatement.execute();
-			resultSet = preparedStatement.getResultSet();
-		} catch (SQLException ex) {
-			Logger.getLogger(Executable.class.getName()).log(Level.SEVERE, null, ex);
+	public ResultSet execute(String query, String ... values) throws SQLException{
+		PreparedStatement preparedStatement = connection.prepareStatement(query);
+		for (int i = 0; i < values.length; i++) {
+			preparedStatement.setString(i + 1, values[i]);
 		}
-		
+		preparedStatement.execute();
+		ResultSet resultSet = preparedStatement.getResultSet();
 		return resultSet;
 	}
 	
